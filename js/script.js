@@ -49,13 +49,11 @@ setBtn.addEventListener('click', () => {
 
     //Genero 16 numeri random univoci dalla griglia per le bombe
     const bombsArray = genBombs(cellsNumber, 16);
-    console.log(bombsArray);
 
     //Genero i tentativi
     const attempsArray = [];
     let attempsNum = 0;
     const maxAttempts = cellsNumber - bombsArray.length;
-    console.log(attempsArray, maxAttempts);
 
     for (let i = 1; i <= cellsNumber; i++) {
         //genenerare gli square
@@ -67,7 +65,6 @@ setBtn.addEventListener('click', () => {
         // evento secondo click su square
         square.addEventListener('click', () => {
             const secondClick = clickSquare (square, bombsArray, attempsArray, maxAttempts, attempsNum);
-            console.log(secondClick);
             attempsNum += 1;
         }
     )}
@@ -92,7 +89,7 @@ function endGame (arrayBombs, attempsArray, maxAttempts) {
         const squareValue = parseInt(square.innerHTML);
 
         if (arrayBombs.includes(squareValue)) {
-            square.classList.add('second-click-bomb')
+            square.classList.add('second-click-bomb');
         }
     }
 
@@ -103,41 +100,37 @@ function endGame (arrayBombs, attempsArray, maxAttempts) {
         messageText = `Mamma mia, che disastro, hai indovinato solo ${attempsArray.length} tentativi validi.. Play again`;
     }
 
-    const messageTextEl = document.createElement('h1')
+    const messageTextEl = document.createElement('h1');
     messageTextEl.classList.add('message', 'p-1rem');
     messageTextEl.append(messageText);
     document.querySelector('.grid').append(messageTextEl);
 
     //Disabilitare le square togliendo il cursor pointer
-    document.querySelector('.grid').classList.add('end-game')
+    document.querySelector('.grid').classList.add('end-game');
 }
 
 
 //Genero quello che succede sui click su square
-function clickSquare (square, arrayBombs, attempsArray, maxAttempts, tentativi) {
+function clickSquare (square, arrayBombs, attempsArray, maxAttempts) {
 
     // Devo ottenere il numero dello square
     const numb = parseInt(square.innerHTML);
-    console.log(numb);
 
     // 1° opzione - Abbiamo colpito la bomba?
     // 2° opzione - Non è una bomba e neanche un numero cliccato in precedenza
-    if (arrayBombs.includes(numb)) {
-        console.log('Hai colpito una bomba dopo', tentativi, 'tentativi');
-
+    if (arrayBombs.includes(numb)) {       
         endGame (arrayBombs, attempsArray, maxAttempts)
     } else if (!attempsArray.includes(numb)){
-        square.classList.add('second-click-safe')
+        square.classList.add('second-click-safe');
 
         attempsArray.push(numb);
     
        if (attempsArray.length === maxAttempts)  {
-           console.log('Hai vinto');
 
-           endGame (arrayBombs, attempsArray, maxAttempts)
+           endGame (arrayBombs, attempsArray, maxAttempts);
        }
     }
-    return numb
+    return numb;
 }
 
 
