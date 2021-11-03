@@ -44,13 +44,18 @@ setBtn.addEventListener('click', () => {
     //Gen grid parent
     const grid = document.createElement('div');
     grid.classList.add('grid');
-    
     // Inserisci grid
     wrapGrid.append(grid);
 
     //Genero 16 numeri random univoci dalla griglia per le bombe
     const bombsArray = genBombs(cellsNumber, 16);
     console.log(bombsArray);
+
+    //Genero i tentativi
+    const attempsArray = [];
+    let attempsNum = 0;
+    const maxAttempts = cellsNumber - bombsArray.length;
+    console.log(attempsArray, maxAttempts);
 
     for (let i = 1; i <= cellsNumber; i++) {
         //genenerare gli square
@@ -60,8 +65,12 @@ setBtn.addEventListener('click', () => {
         grid.append(square);
 
         // evento secondo click su square
-        square.addEventListener('click', () => square.classList.add('second-click'));
-    }
+        square.addEventListener('click', () => {
+            const secondClick = clickSquare (square, bombsArray, attempsArray, maxAttempts, attempsNum);
+            console.log(secondClick);
+            attempsNum += 1;
+        }
+    )}
 })
 
 
@@ -70,6 +79,68 @@ setBtn.addEventListener('click', () => {
 /**
  * Functions
  */
+
+//Endgame logic
+function endGame (arrayBombs, attempsArray, maxAttempts) {
+    // Ottengo tutte le square presenti
+
+    const squares = document.querySelectorAll('.square');
+
+    //mostra tutte le bombe presenti nell'area di gioco
+    for (let i = 0; i < squares.length; i++) {
+        const square = squares[i];
+        const squareValue = parseInt(square.innerHTML);
+
+        if (arrayBombs.includes(squareValue)) {
+            square.classList.add('second-click-bomb')
+        }
+    }
+
+    // Messaggio di endgame
+    let messageText = `Complimenti, hai idovinato i ${maxAttempts} tentativi validi.. Play again`;
+
+    if (attempsArray.length < maxAttempts) {
+        messageText = `Mamma mia, che disastro, hai indovinato solo ${attempsArray.length} tentativi validi.. Play again`;
+    }
+
+    const messageTextEl = document.createElement('h1')
+    messageTextEl.classList.add('message', 'p-1rem');
+    messageTextEl.append(messageText);
+    document.querySelector('.grid').append(messageTextEl);
+
+    //Disabilitare le square togliendo il cursor pointer
+    document.querySelector('.grid').classList.add('end-game')
+}
+
+
+//Genero quello che succede sui click su square
+function clickSquare (square, arrayBombs, attempsArray, maxAttempts, tentativi) {
+
+    // Devo ottenere il numero dello square
+    const numb = parseInt(square.innerHTML);
+    console.log(numb);
+
+    // 1° opzione - Abbiamo colpito la bomba?
+    // 2° opzione - Non è una bomba e neanche un numero cliccato in precedenza
+    if (arrayBombs.includes(numb)) {
+        console.log('Hai colpito una bomba dopo', tentativi, 'tentativi');
+
+        endGame (arrayBombs, attempsArray, maxAttempts)
+    } else if (!attempsArray.includes(numb)){
+        square.classList.add('second-click-safe')
+
+        attempsArray.push(numb);
+    
+       if (attempsArray.length === maxAttempts)  {
+           console.log('Hai vinto');
+
+           endGame (arrayBombs, attempsArray, maxAttempts)
+       }
+    }
+    return numb
+}
+
+
 
 //Genero la lista delle bombe
 function genBombs (totCells, totBombs) {
@@ -107,12 +178,8 @@ function genRandNum(min, max) {
     node.style.width = `calc(100% / ${cells})`;
     node.style.height = `calc(100% / ${cells})`;
 
-    // Creo nodo span
-    const span = document.createElement('span');
-    // Appendo al nodo span il contenuto (num)
-    span.append(num);
     // Aggiungo al nodo square il contenuto del nodo span
-    node.append(span);
+    node.append(num);
 
     return node;
 }

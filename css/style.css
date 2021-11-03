@@ -87,7 +87,19 @@ footer {
     cursor: pointer;
 }
 
-.second-click {
-    background-color: #6495ed;
+.second-click-safe, 
+.second-click-bomb {
     color: #fff;
+}
+
+.second-click-safe {
+    background-color: #6495ed;
+}
+
+.second-click-bomb {
+    background-color: #dc143c;
+}
+
+.grid.end-game .square {
+    pointer-events: none;
 }
